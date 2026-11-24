@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASTRON CONVERT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f9ff;--bg2:#e3f3ff;--card:rgba(255,255,255,.75);--text:#0f2740;--muted:#58708a;--primary:#38bdf8;--primary2:#0ea5e9;--border:rgba(14,116,184,.15);--shadow:0 8px 30px rgba(14,116,184,.12);--ok:#16a34a;--bad:#dc2626}
+[data-theme=dark]{--bg:#0b1220;--bg2:#101a2e;--card:rgba(24,36,58,.75);--text:#e6f0fb;--muted:#93a7c0;--border:rgba(125,180,255,.15);--shadow:0 8px 30px rgba(0,0,0,.4)}
+[data-theme=blue]{--bg:#0a4a8f;--bg2:#0b61b8;--card:rgba(255,255,255,.14);--text:#fff;--muted:#cfe6ff;--border:rgba(255,255,255,.25);--shadow:0 8px 30px rgba(0,30,80,.35)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;color:var(--text);font:16px/1.6 Poppins,Cairo,sans-serif;background:linear-gradient(160deg,var(--bg),var(--bg2)) fixed;transition:background .3s,color .3s}
+html[lang=ar] body{font-family:Cairo,Poppins,sans-serif}
+#app{flex:1;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;padding:10px 20px;background:var(--card);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.brand{font-weight:700;font-size:1.2rem;background:linear-gradient(90deg,var(--primary),var(--primary2));-webkit-background-clip:text;background-clip:text;color:transparent;display:flex;align-items:center;gap:8px}
+.brand svg{width:28px;height:28px}
+nav{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+nav a{padding:6px 12px;border-radius:999px;transition:.2s;font-size:.95rem}
+nav a:hover,nav a.on{background:var(--primary);color:#05283f}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select,input,textarea{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 12px;width:100%;outline:none;transition:.2s}
+select{width:auto;padding:6px 10px}
+input:focus,textarea:focus,select:focus{border-color:var(--primary2);box-shadow:0 0 0 3px rgba(56,189,248,.3)}
+input[type=checkbox]{width:auto}
+input[type=color]{padding:2px;height:40px;width:70px}
+option{color:#0f2740}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;cursor:pointer;font:inherit;font-weight:600;padding:9px 18px;border-radius:999px;color:#05283f;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:var(--shadow);transition:.2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+.btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--border);box-shadow:none}
+.btn.danger{background:var(--bad);color:#fff}
+.menu{display:none}
+main{width:100%;max-width:1100px;margin:0 auto;padding:24px 16px;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+.card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow);transition:.25s}
+.card:hover{transform:translateY(-2px)}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.hero{text-align:center;padding:56px 16px}
+.hero h1{font-size:clamp(1.8rem,5vw,3rem);margin:0 0 12px}
+.hero p{color:var(--muted);max-width:620px;margin:0 auto 24px}
+.badge{display:inline-block;padding:2px 12px;border-radius:999px;font-size:.8rem;background:var(--primary);color:#05283f}
+.badge.ok{background:var(--ok);color:#fff}.badge.bad{background:var(--bad);color:#fff}
+.form{max-width:420px;margin:30px auto;display:grid;gap:14px}
+label{display:grid;gap:4px;font-weight:600;font-size:.9rem}
+label.row{display:flex;align-items:center;gap:8px}
+.stat b{display:block;font-size:1.9rem}.stat span{color:var(--muted);font-size:.9rem}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:8px 10px;text-align:start;border-bottom:1px solid var(--border);white-space:nowrap}
+.bars{display:flex;align-items:flex-end;gap:3px;height:140px;overflow-x:auto;padding-top:10px}
+.bars div{flex:1;min-width:14px;border-radius:6px 6px 0 0;background:linear-gradient(var(--primary),var(--primary2));position:relative;transition:.3s}
+.bars div:hover{filter:brightness(1.2)}
+.bars small{position:absolute;bottom:-18px;inset-inline-start:0;font-size:.6rem;color:var(--muted);white-space:nowrap}
+.bars.h{display:grid;height:auto;gap:6px}
+.bars.h div{height:24px;min-width:4px;border-radius:0 8px 8px 0;display:flex;align-items:center;padding:0 8px;color:#05283f;font-size:.8rem;white-space:nowrap}
+.bars.h:not(.x){}
+.chart{margin-bottom:26px}
+.banner{background:#f59e0b;color:#1f1300;text-align:center;padding:8px;font-weight:600}
+footer{padding:20px;text-align:center;color:var(--muted);border-top:1px solid var(--border);font-size:.9rem}
+.social{display:flex;gap:10px;justify-content:center;margin-bottom:8px;flex-wrap:wrap}
+.spin{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary2);border-radius:50%;animation:s .8s linear infinite;margin:40px auto}
+@keyframes s{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:20px;inset-inline:0;margin:auto;width:fit-content;max-width:90%;padding:10px 20px;border-radius:14px;background:#0f2740;color:#fff;opacity:0;pointer-events:none;transition:.3s;z-index:50}
+#toast.show{opacity:1}#toast.err{background:var(--bad)}
+.err-msg{color:var(--bad);min-height:1.2em;font-size:.9rem}
+@media(max-width:820px){
+ header{flex-wrap:wrap}.menu{display:inline-flex}
+ nav{display:none;order:5;width:100%;flex-direction:column}nav.open{display:flex}
+ .tools{margin-inline-start:auto}
+}
+
+.muted{color:var(--muted)}
+.inline{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.inline input{flex:1;min-width:160px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chip{font:inherit;cursor:pointer;padding:7px 16px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text);transition:.2s}
+.chip:hover{transform:translateY(-2px)}.chip.on{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#05283f;font-weight:600}
+.drop{border:2px dashed var(--primary2);border-radius:20px;padding:40px 16px;text-align:center;cursor:pointer;transition:.2s}
+.drop:hover,.drop.over{background:rgba(56,189,248,.15);transform:scale(1.01)}.drop .big{font-size:2.4rem;color:var(--primary2)}
+.prev{width:100%;max-height:360px;border-radius:16px;background:#000}
+.progress{height:16px;border-radius:999px;background:var(--border);overflow:hidden}
+.progress div{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary2));transition:width .4s;border-radius:999px;background-size:200%;animation:flow 2s linear infinite}
+@keyframes flow{to{background-position:200% 0}}
+.dot{display:inline-block;width:12px;height:12px;border:2px solid #05283f;border-top-color:transparent;border-radius:50%;animation:s .7s linear infinite;margin-inline-end:8px;vertical-align:-1px}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+// Backend URL. Change this to your deployed API (e.g. https://api.example.com) before deploying the frontend.
+// When the page is served by the backend itself (same origin) this value is ignored automatically.
+// Otherwise users can change it from the "API" button in the footer (saved in localStorage).
+window.ASTRON_API = (() => { try { return localStorage.astronApi || 'http://localhost:4000'; } catch { return 'http://localhost:4000'; } })();
+
+</script>
+<script>
+const I18N = {
+ar:{home:'الرئيسية',about:'من نحن',privacy:'سياسة الخصوصية',terms:'شروط الخدمة',contact:'اتصل بنا',settings:'الإعدادات',login:'تسجيل الدخول',register:'إنشاء حساب',logout:'تسجيل الخروج',dashboard:'لوحتي',history:'السجل',admin:'لوحة الإدارة',
+userMode:'التبديل إلى وضع المستخدم',backAdmin:'العودة إلى لوحة الإدارة',username:'اسم المستخدم',password:'كلمة المرور',confirm:'تأكيد كلمة المرور',noAcc:'ليس لديك حساب؟',haveAcc:'لديك حساب بالفعل؟',
+heroTitle:'حوّل واستخرج وسائطك بسهولة',heroSub:'منصة ASTRON CONVERT لاستخراج روابط الوسائط المدعومة وتحويل الفيديو بين MP4 وM3U8 وMPD.',soon:'قريباً',extractor:'مستخرج الروابط',converter:'محوّل الفيديو',extractorD:'استخراج الروابط المدعومة من المصادر المتاحة.',converterD:'تحويل الفيديو باستخدام FFmpeg.',
+siteStatus:'حالة الخدمات',max:'الحد الأقصى للرفع',fmts:'الصيغ المتاحة',
+aboutT:['ASTRON CONVERT منصة لاستخراج روابط الوسائط المدعومة وتحويل ملفات الفيديو.','نحترم صلاحيات المصادر وحمايات المحتوى، ولا نتجاوز DRM أو متطلبات تسجيل الدخول.'],
+privT:['نخزّن اسم المستخدم وتجزئة كلمة المرور (Argon2) وسجل عملياتك فقط.','لا نخزّن كلمة المرور نفسها. لا نبيع المعلومات الشخصية.','تُحسب الزيارات بمعرّف عشوائي مجزّأ لا يكشف هويتك.','يمكنك مسح سجلك من صفحة السجل. لطلب حذف حسابك تواصل معنا عبر صفحة اتصل بنا.','سياسة حذف الملفات المؤقتة ستُوضّح عند إطلاق محوّل الفيديو.'],
+termsT:['استخدم الخدمة فقط مع محتوى تملكه أو لديك إذن باستخدامه.','يُمنع تجاوز DRM أو قيود تسجيل الدخول أو حماية المنصات.','قد نعلّق الحسابات التي تسيء استخدام الخدمة.'],
+contactT:'تواصل معنا عبر القنوات التالية:',wa:'قناة واتساب',fb:'صفحة فيسبوك',
+lang:'اللغة',theme:'المظهر',light:'فاتح',dark:'داكن',blue:'أزرق',
+welcome:'مرحباً',myOps:'عملياتي',recent:'آخر العمليات',noOps:'لا توجد عمليات بعد.',
+type:'النوع',source:'المصدر',format:'الصيغة',date:'التاريخ',duration:'المدة',status:'الحالة',success:'نجحت',failed:'فشلت',reason:'السبب',clear:'مسح السجل',confirmClear:'هل تريد مسح سجلك؟',conversion:'تحويل',extraction:'استخراج',user:'المستخدم',
+overview:'نظرة عامة',siteSettings:'إعدادات الموقع',users:'المستخدمون',allHist:'كل العمليات',
+s_total:'إجمالي الزوار',s_today:'زوار اليوم',s_month:'زوار هذا الشهر',s_users:'المستخدمون المسجلون',s_active:'الزوار النشطون',s_conv:'إجمالي عمليات التحويل',s_ext:'إجمالي عمليات الاستخراج',s_ok:'العمليات الناجحة',s_bad:'العمليات الفاشلة',
+c_daily:'الزوار اليوميون (30 يوماً)',c_monthly:'الزوار الشهريون',c_users:'المسجلون الجدد',c_serv:'الخدمات الأكثر استخداماً',c_fmt:'الصيغ الأكثر استخداماً',noData:'لا توجد بيانات بعد.',
+siteName:'اسم الموقع',siteDesc:'وصف الموقع',defLang:'اللغة الافتراضية',extOn:'تفعيل مستخرج الروابط',convOn:'تفعيل محوّل الفيديو',maxUp:'الحد الأقصى للرفع (MB)',retention:'مدة الاحتفاظ بالملفات المؤقتة (دقائق)',maintOn:'وضع الصيانة',maintMsg:'رسالة الصيانة',primary:'اللون الرئيسي',themeMode:'المظهر الافتراضي',save:'حفظ',saved:'تم الحفظ.',
+role:'الدور',created:'تاريخ الإنشاء',del:'حذف',confirmDel:'حذف هذا المستخدم؟',net:'تعذر الاتصال بالخادم.',nf:'الصفحة غير موجودة.',rights:'© 2026 ASTRON CONVERT. جميع الحقوق محفوظة.',loading:'جارٍ التحميل...'},
+en:{home:'Home',about:'About Us',privacy:'Privacy Policy',terms:'Terms of Service',contact:'Contact Us',settings:'Settings',login:'Login',register:'Register',logout:'Logout',dashboard:'My Dashboard',history:'History',admin:'Admin Dashboard',
+userMode:'Switch to User Mode',backAdmin:'Back to Admin Dashboard',username:'Username',password:'Password',confirm:'Confirm Password',noAcc:"Don't have an account?",haveAcc:'Already have an account?',
+heroTitle:'Extract and convert your media with ease',heroSub:'ASTRON CONVERT extracts supported media links and converts video between MP4, M3U8 and MPD.',soon:'Coming soon',extractor:'Link Extractor',converter:'Video Converter',extractorD:'Extract supported links from available sources.',converterD:'Convert video using FFmpeg.',
+siteStatus:'Service status',max:'Max upload size',fmts:'Available formats',
+aboutT:['ASTRON CONVERT extracts supported media links and converts video files.','We respect source permissions and content protections; we never bypass DRM or login requirements.'],
+privT:['We store only your username, a hash of your password (Argon2) and your operation history.','We never store your actual password. We do not sell personal information.','Visits are counted with a salted, hashed random ID that does not reveal your identity.','You can clear your history on the History page. To request account deletion, reach us via the Contact page.','Temporary-file retention will be described when the video converter launches.'],
+termsT:['Only use the service with content you own or have permission to use.','Bypassing DRM, login restrictions or platform protections is prohibited.','We may suspend accounts that abuse the service.'],
+contactT:'Reach us on these channels:',wa:'WhatsApp Channel',fb:'Facebook Profile',
+lang:'Language',theme:'Theme',light:'Light',dark:'Dark',blue:'Blue',
+welcome:'Welcome',myOps:'My operations',recent:'Recent operations',noOps:'No operations yet.',
+type:'Type',source:'Source',format:'Format',date:'Date',duration:'Duration',status:'Status',success:'Success',failed:'Failed',reason:'Reason',clear:'Clear history',confirmClear:'Clear your history?',conversion:'Conversion',extraction:'Extraction',user:'User',
+overview:'Overview',siteSettings:'Site settings',users:'Users',allHist:'All operations',
+s_total:'Total visitors',s_today:'Visitors today',s_month:'Visitors this month',s_users:'Registered users',s_active:'Active visitors',s_conv:'Total conversions',s_ext:'Total extractions',s_ok:'Successful operations',s_bad:'Failed operations',
+c_daily:'Daily visitors (30 days)',c_monthly:'Monthly visitors',c_users:'New registrations',c_serv:'Most-used services',c_fmt:'Most-used formats',noData:'No data yet.',
+siteName:'Site name',siteDesc:'Site description',defLang:'Default language',extOn:'Enable Link Extractor',convOn:'Enable Video Converter',maxUp:'Max upload size (MB)',retention:'Temp file retention (minutes)',maintOn:'Maintenance Mode',maintMsg:'Maintenance message',primary:'Primary color',themeMode:'Default theme',save:'Save',saved:'Saved.',
+role:'Role',created:'Created',del:'Delete',confirmDel:'Delete this user?',net:'Could not reach the server.',nf:'Page not found.',rights:'© 2026 ASTRON CONVERT. All Rights Reserved.',loading:'Loading...'},
+fr:{home:'Accueil',about:'À propos',privacy:'Politique de confidentialité',terms:"Conditions d'utilisation",contact:'Contact',settings:'Paramètres',login:'Connexion',register:'Inscription',logout:'Déconnexion',dashboard:'Mon espace',history:'Historique',admin:"Tableau d'administration",
+userMode:'Passer en mode utilisateur',backAdmin:"Retour au tableau d'administration",username:"Nom d'utilisateur",password:'Mot de passe',confirm:'Confirmer le mot de passe',noAcc:"Pas de compte ?",haveAcc:'Déjà un compte ?',
+heroTitle:'Extrayez et convertissez vos médias facilement',heroSub:'ASTRON CONVERT extrait les liens médias pris en charge et convertit la vidéo entre MP4, M3U8 et MPD.',soon:'Bientôt',extractor:'Extracteur de liens',converter:'Convertisseur vidéo',extractorD:'Extraire les liens pris en charge depuis les sources disponibles.',converterD:'Convertir la vidéo avec FFmpeg.',
+siteStatus:'État des services',max:'Taille max. de téléversement',fmts:'Formats disponibles',
+aboutT:["ASTRON CONVERT extrait les liens médias pris en charge et convertit les fichiers vidéo.",'Nous respectons les autorisations des sources et les protections de contenu ; nous ne contournons jamais le DRM ni les connexions requises.'],
+privT:["Nous stockons uniquement votre nom d'utilisateur, un hachage de votre mot de passe (Argon2) et l'historique de vos opérations.",'Nous ne stockons jamais votre mot de passe. Nous ne vendons pas les données personnelles.',"Les visites sont comptées via un identifiant aléatoire haché qui ne révèle pas votre identité.","Vous pouvez effacer votre historique sur la page Historique. Pour demander la suppression de votre compte, contactez-nous.",'La conservation des fichiers temporaires sera décrite au lancement du convertisseur.'],
+termsT:["N'utilisez le service qu'avec du contenu dont vous êtes propriétaire ou autorisé.","Il est interdit de contourner le DRM, les connexions requises ou les protections des plateformes.",'Nous pouvons suspendre les comptes qui abusent du service.'],
+contactT:'Retrouvez-nous sur ces canaux :',wa:'Chaîne WhatsApp',fb:'Profil Facebook',
+lang:'Langue',theme:'Thème',light:'Clair',dark:'Sombre',blue:'Bleu',
+welcome:'Bienvenue',myOps:'Mes opérations',recent:'Opérations récentes',noOps:"Aucune opération pour l'instant.",
+type:'Type',source:'Source',format:'Format',date:'Date',duration:'Durée',status:'Statut',success:'Réussie',failed:'Échouée',reason:'Raison',clear:"Effacer l'historique",confirmClear:'Effacer votre historique ?',conversion:'Conversion',extraction:'Extraction',user:'Utilisateur',
+overview:"Vue d'ensemble",siteSettings:'Paramètres du site',users:'Utilisateurs',allHist:'Toutes les opérations',
+s_total:'Visiteurs totaux',s_today:"Visiteurs aujourd'hui",s_month:'Visiteurs ce mois',s_users:'Utilisateurs inscrits',s_active:'Visiteurs actifs',s_conv:'Total des conversions',s_ext:'Total des extractions',s_ok:'Opérations réussies',s_bad:'Opérations échouées',
+c_daily:'Visiteurs par jour (30 jours)',c_monthly:'Visiteurs par mois',c_users:'Nouvelles inscriptions',c_serv:'Services les plus utilisés',c_fmt:'Formats les plus utilisés',noData:'Aucune donnée.',
+siteName:'Nom du site',siteDesc:'Description du site',defLang:'Langue par défaut',extOn:"Activer l'extracteur de liens",convOn:'Activer le convertisseur vidéo',maxUp:'Taille max. (Mo)',retention:'Conservation des fichiers temporaires (minutes)',maintOn:'Mode maintenance',maintMsg:'Message de maintenance',primary:'Couleur principale',themeMode:'Thème par défaut',save:'Enregistrer',saved:'Enregistré.',
+role:'Rôle',created:'Créé le',del:'Supprimer',confirmDel:'Supprimer cet utilisateur ?',net:'Impossible de joindre le serveur.',nf:'Page introuvable.',rights:'© 2026 ASTRON CONVERT. Tous droits réservés.',loading:'Chargement...'}
+};
+
+Object.assign(I18N.ar, {
+ srcOther:'أخرى', uploadSrc:'رفع ملف', svcOff:'هذه الخدمة معطّلة حالياً.',
+ urlL:'الرابط', paste:'لصق', clr:'مسح', outFmt:'صيغة الإخراج', analyze:'تحليل الرابط', analyzing:'جارٍ تحليل الرابط...',
+ badUrl:'الرجاء إدخال رابط صحيح يبدأ بـ http أو https.', resTitle:'النتيجة', extUrl:'الرابط المستخرج', srcName:'اسم المصدر', copy:'نسخ الرابط', copied:'تم النسخ.', dl:'تنزيل',
+ extNote:'يتم إرجاع ما هو متاح فعلاً وعلنياً في المصدر فقط. لا نتجاوز DRM أو تسجيل الدخول أو حمايات المنصات.',
+ drop:'اسحب الفيديو وأفلته هنا أو اضغط للاختيار', fName:'اسم الملف', fSize:'الحجم', fDur:'المدة', rmFile:'إزالة الفيديو', startConv:'بدء التحويل',
+ uploading:'جارٍ رفع الملف...', st_queued:'في قائمة الانتظار...', st_running:'جارٍ التحويل...', st_done:'اكتمل التحويل', st_failed:'فشل التحويل', st_cancelled:'أُلغي التحويل',
+ cancel:'إلغاء', another:'تحويل فيديو آخر', pkgNote:'التنزيل ملف ZIP يحتوي على ملف القائمة (manifest) وجميع المقاطع.', badFile:'نوع الملف غير مدعوم.', tooBig:'حجم الملف يتجاوز الحد المسموح',
+ keepNote:'يُحذف الملف المحوَّل تلقائياً بعد انتهاء مدة الاحتفاظ.',
+ err_CANCELLED:'أُلغيت العملية', err_CONVERSION_FAILED:'فشل التحويل عبر FFmpeg', err_SERVER_RESTART:'أُعيد تشغيل الخادم أثناء العملية', err_EXPIRED:'انتهت مدة الاحتفاظ بالملف',
+ err_NO_FORMAT:'الصيغة غير متاحة في المصدر', err_NO_MEDIA:'لا توجد وسائط متاحة', err_DRM_PROTECTED:'محتوى محمي بـ DRM', err_LOGIN_REQUIRED:'يتطلب تسجيل الدخول',
+ err_SOURCE_UNREACHABLE:'تعذر الوصول إلى المصدر', err_SOURCE_MISMATCH:'الرابط لا يطابق المصدر', err_INVALID_URL:'رابط غير صالح', err_BAD_REQUEST:'طلب غير صالح',
+ privT:['نخزّن اسم المستخدم وتجزئة كلمة المرور (Argon2) وسجل عملياتك (النوع والمصدر والصيغة والوقت والحالة) فقط. لا نخزّن الروابط التي تحلّلها.','لا نخزّن كلمة المرور نفسها. لا نبيع المعلومات الشخصية.','تُحسب الزيارات بمعرّف عشوائي مجزّأ لا يكشف هويتك.','يمكنك مسح سجلك من صفحة السجل. لطلب حذف حسابك تواصل معنا عبر صفحة اتصل بنا.','تُرفع الفيديوهات إلى الخادم للتحويل بواسطة FFmpeg. يُحذف ملف الإدخال فور انتهاء المعالجة، ويُحتفظ بالملف المحوَّل طوال مدة الاحتفاظ التي يحددها المسؤول ثم يُحذف تلقائياً.','عند استخراج رابط، يطلب خادمنا الصفحة العامة التي تدخلها فقط.']
+});
+Object.assign(I18N.en, {
+ srcOther:'Other', uploadSrc:'File upload', svcOff:'This service is currently disabled.',
+ urlL:'Link', paste:'Paste', clr:'Clear', outFmt:'Output format', analyze:'Analyze Link', analyzing:'Analyzing link...',
+ badUrl:'Please enter a valid URL starting with http or https.', resTitle:'Result', extUrl:'Extracted URL', srcName:'Source', copy:'Copy Link', copied:'Copied.', dl:'Download',
+ extNote:'Only media that is genuinely and publicly available at the source is returned. We never bypass DRM, login or platform protections.',
+ drop:'Drag and drop a video here, or click to choose', fName:'File name', fSize:'Size', fDur:'Duration', rmFile:'Remove video', startConv:'Start Conversion',
+ uploading:'Uploading file...', st_queued:'Waiting in queue...', st_running:'Converting...', st_done:'Conversion complete', st_failed:'Conversion failed', st_cancelled:'Conversion cancelled',
+ cancel:'Cancel', another:'Convert Another Video', pkgNote:'The download is a ZIP containing the manifest and all segments.', badFile:'Unsupported file type.', tooBig:'File exceeds the allowed size',
+ keepNote:'The converted file is deleted automatically after the retention period.',
+ err_CANCELLED:'Cancelled', err_CONVERSION_FAILED:'FFmpeg conversion failed', err_SERVER_RESTART:'Server restarted during the job', err_EXPIRED:'File retention period ended',
+ err_NO_FORMAT:'Format not available at the source', err_NO_MEDIA:'No available media', err_DRM_PROTECTED:'DRM-protected content', err_LOGIN_REQUIRED:'Login required',
+ err_SOURCE_UNREACHABLE:'Source unreachable', err_SOURCE_MISMATCH:'Link does not match source', err_INVALID_URL:'Invalid URL', err_BAD_REQUEST:'Invalid request',
+ privT:['We store only your username, a hash of your password (Argon2) and your operation history (type, source, format, time, status). We do not store the links you analyze.','We never store your actual password. We do not sell personal information.','Visits are counted with a salted, hashed random ID that does not reveal your identity.','You can clear your history on the History page. To request account deletion, reach us via the Contact page.','Videos are uploaded to our server and converted with FFmpeg. The input file is deleted as soon as processing ends; the converted file is kept for the retention period set by the administrator and then deleted automatically.','When you extract a link, our server requests only the public page you enter.']
+});
+Object.assign(I18N.fr, {
+ srcOther:'Autre', uploadSrc:'Fichier téléversé', svcOff:'Ce service est actuellement désactivé.',
+ urlL:'Lien', paste:'Coller', clr:'Effacer', outFmt:'Format de sortie', analyze:'Analyser le lien', analyzing:'Analyse du lien...',
+ badUrl:'Veuillez saisir une URL valide commençant par http ou https.', resTitle:'Résultat', extUrl:'URL extraite', srcName:'Source', copy:'Copier le lien', copied:'Copié.', dl:'Télécharger',
+ extNote:"Seuls les médias réellement et publiquement disponibles à la source sont renvoyés. Nous ne contournons jamais le DRM, la connexion ni les protections des plateformes.",
+ drop:'Glissez-déposez une vidéo ici, ou cliquez pour choisir', fName:'Nom du fichier', fSize:'Taille', fDur:'Durée', rmFile:'Retirer la vidéo', startConv:'Démarrer la conversion',
+ uploading:'Téléversement...', st_queued:"En file d'attente...", st_running:'Conversion en cours...', st_done:'Conversion terminée', st_failed:'Échec de la conversion', st_cancelled:'Conversion annulée',
+ cancel:'Annuler', another:'Convertir une autre vidéo', pkgNote:'Le téléchargement est un ZIP contenant le manifeste et tous les segments.', badFile:'Type de fichier non pris en charge.', tooBig:'Le fichier dépasse la taille autorisée',
+ keepNote:'Le fichier converti est supprimé automatiquement après la durée de conservation.',
+ err_CANCELLED:'Annulée', err_CONVERSION_FAILED:'Échec de la conversion FFmpeg', err_SERVER_RESTART:'Serveur redémarré pendant la tâche', err_EXPIRED:'Durée de conservation terminée',
+ err_NO_FORMAT:'Format indisponible à la source', err_NO_MEDIA:'Aucun média disponible', err_DRM_PROTECTED:'Contenu protégé par DRM', err_LOGIN_REQUIRED:'Connexion requise',
+ err_SOURCE_UNREACHABLE:'Source inaccessible', err_SOURCE_MISMATCH:'Le lien ne correspond pas à la source', err_INVALID_URL:'URL invalide', err_BAD_REQUEST:'Requête invalide',
+ privT:["Nous stockons uniquement votre nom d'utilisateur, un hachage de votre mot de passe (Argon2) et l'historique de vos opérations (type, source, format, heure, statut). Nous ne stockons pas les liens que vous analysez.",'Nous ne stockons jamais votre mot de passe. Nous ne vendons pas les données personnelles.',"Les visites sont comptées via un identifiant aléatoire haché qui ne révèle pas votre identité.","Vous pouvez effacer votre historique sur la page Historique. Pour demander la suppression de votre compte, contactez-nous.","Les vidéos sont envoyées à notre serveur et converties avec FFmpeg. Le fichier d'entrée est supprimé dès la fin du traitement ; le fichier converti est conservé pendant la durée définie par l'administrateur puis supprimé automatiquement.","Lors de l'extraction d'un lien, notre serveur demande uniquement la page publique que vous saisissez."]
+});
+
+I18N.ar.apiPrompt = 'عنوان خادم ASTRON CONVERT (API):';
+I18N.en.apiPrompt = 'ASTRON CONVERT server (API) address:';
+I18N.fr.apiPrompt = "Adresse du serveur ASTRON CONVERT (API) :";
+
+</script>
+<script>
+(() => {
+let API = window.ASTRON_API;
+// If this page is served by the ASTRON backend (same origin), talk to it directly.
+async function detectApi() {
+  try { if (/^https?:$/.test(location.protocol)) { const d = await (await fetch('/api/health')).json(); if (d && d.ok === true) API = ''; } } catch {}
+}
+const S = { lang: localStorage.lang || 'ar', theme: localStorage.theme || null, user: null, site: {}, mode: sessionStorage.mode || 'admin', adminData: {} };
+const t = k => (I18N[S.lang][k] ?? k);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = (s, r = document) => r.querySelector(s);
+const isAdmin = () => S.user && S.user.role === 'ADMIN';
+const adminView = () => isAdmin() && S.mode === 'admin';
+
+async function api(path, { method = 'GET', body } = {}) {
+  let res;
+  try {
+    res = await fetch(API + path, { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-Lang': S.lang }, body: body ? JSON.stringify(body) : undefined });
+  } catch { throw { message: t('net') }; }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw { status: res.status, message: data.message?.[S.lang] || data.message || data.error || t('net') };
+  return data;
+}
+function toast(msg, bad) { const e = $('#toast'); e.textContent = msg; e.className = 'show' + (bad ? ' err' : ''); clearTimeout(toast.t); toast.t = setTimeout(() => e.className = '', 3000); }
+const fmtDate = d => new Date(d).toLocaleString(S.lang);
+const fmtDur = ms => ms == null ? '—' : (ms / 1000).toFixed(1) + 's';
+
+function applyLook() {
+  document.documentElement.lang = S.lang;
+  document.documentElement.dir = S.lang === 'ar' ? 'rtl' : 'ltr';
+  const mode = S.theme || (['light', 'dark', 'blue'].includes(S.site.theme?.mode) ? S.site.theme.mode : 'light');
+  document.documentElement.dataset.theme = mode;
+  const p = S.site.theme?.primary;
+  if (p && /^#[0-9a-f]{6}$/i.test(p)) document.documentElement.style.setProperty('--primary', p);
+  document.title = (S.site.site_name || 'ASTRON CONVERT');
+}
+
+const LOGO = '<svg viewBox="0 0 32 32"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#0284c7"/></linearGradient></defs><circle cx="16" cy="16" r="14" fill="url(#g)"/><path d="M16 6l3 8h8l-6.5 5 2.5 8-7-5-7 5 2.5-8L5 14h8z" fill="#fff"/></svg>';
+
+function layout(content) {
+  const r = route();
+  const links = [['home', '/'], ...(S.user ? [['dashboard', '/dashboard'], ['extractor', '/extractor'], ['converter', '/converter'], ['history', '/history']] : []), ...(adminView() ? [['admin', '/admin']] : []), ['about', '/about'], ['contact', '/contact'], ['settings', '/settings']];
+  const maint = S.site.maintenance_mode ? `<div class="banner">${esc(S.site.maintenance_message?.[S.lang])}</div>` : '';
+  $('#app').innerHTML = `${maint}<header>
+    <a class="brand" href="#/">${LOGO}<span>${esc(S.site.site_name || 'ASTRON CONVERT')}</span></a>
+    <button class="btn ghost menu" id="menu" aria-label="menu">☰</button>
+    <nav id="nav">${links.map(([k, p]) => `<a href="#${p}" class="${r === p ? 'on' : ''}">${t(k)}</a>`).join('')}</nav>
+    <div class="tools">
+      <select id="langSel" aria-label="${t('lang')}">${[['ar', 'العربية'], ['en', 'English'], ['fr', 'Français']].map(([c, n]) => `<option value="${c}" ${c === S.lang ? 'selected' : ''}>${n}</option>`).join('')}</select>
+      <select id="themeSel" aria-label="${t('theme')}">${['light', 'dark', 'blue'].map(m => `<option value="${m}" ${document.documentElement.dataset.theme === m ? 'selected' : ''}>${t(m)}</option>`).join('')}</select>
+      ${isAdmin() ? `<button class="btn ghost" id="modeBtn">${adminView() ? t('userMode') : t('backAdmin')}</button>` : ''}
+      ${S.user ? `<button class="btn" id="logout">${t('logout')}</button>` : `<a class="btn ghost" href="#/login">${t('login')}</a><a class="btn" href="#/register">${t('register')}</a>`}
+    </div></header>
+    <main id="main">${content}</main>
+    <footer><div class="social"><a class="btn ghost" target="_blank" rel="noopener" href="https://whatsapp.com/channel/0029VbEPv2q59PwbQFNJ4h2p">${t('wa')}</a><a class="btn ghost" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61594747541201">${t('fb')}</a></div>
+    <div><a href="#/privacy">${t('privacy')}</a> · <a href="#/terms">${t('terms')}</a></div><div>${t('rights')}</div>${API === '' ? '' : `<div><button class="chip" id="apiBtn" title="${esc(API)}">API</button></div>`}</footer>`;
+  if ($('#apiBtn')) $('#apiBtn').onclick = () => {
+    const v = prompt(t('apiPrompt'), localStorage.astronApi || API); if (v === null) return;
+    const u = v.trim().replace(/\/+$/, '');
+    if (!u) localStorage.removeItem('astronApi'); else if (/^https?:\/\/[^\s]+$/i.test(u)) localStorage.astronApi = u; else return toast(t('badUrl'), true);
+    location.reload();
+  };
+  $('#menu').onclick = () => $('#nav').classList.toggle('open');
+  $('#nav').onclick = () => $('#nav').classList.remove('open');
+  $('#langSel').onchange = e => { S.lang = localStorage.lang = e.target.value; applyLook(); render(); };
+  $('#themeSel').onchange = e => { S.theme = localStorage.theme = e.target.value; applyLook(); };
+  if ($('#modeBtn')) $('#modeBtn').onclick = () => { S.mode = sessionStorage.mode = adminView() ? 'user' : 'admin'; location.hash = adminView() ? '#/admin' : '#/dashboard'; render(); };
+  if ($('#logout')) $('#logout').onclick = async () => { await api('/api/auth/logout', { method: 'POST' }).catch(() => {}); S.user = null; S.mode = 'admin'; sessionStorage.mode = 'admin'; location.hash = '#/'; render(); };
+}
+const route = () => (location.hash.slice(1) || '/').split('?')[0];
+const off = on => on === false ? ` <span class="badge bad">${t('svcOff')}</span>` : '';
+const srcLabel = x => ({ facebook: 'Facebook', google: 'Google', kick: 'Kick', other: t('srcOther'), upload: t('uploadSrc') }[x] || x || '—');
+const reasonText = e => e ? (I18N[S.lang]['err_' + e] || e) : '—';
+const paras = k => t(k).map(p => `<p>${esc(p)}</p>`).join('');
+const page = (title, body) => `<div class="card"><h2>${title}</h2>${body}</div>`;
+
+/* ---------- pages ---------- */
+const pages = {
+  '/': () => `<section class="hero"><h1>${t('heroTitle')}</h1><p>${t('heroSub')}</p>
+    ${S.user ? `<a class="btn" href="#/dashboard">${t('dashboard')}</a>` : `<a class="btn" href="#/register">${t('register')}</a> <a class="btn ghost" href="#/login">${t('login')}</a>`}</section>
+    <div class="grid">
+      <div class="card"><h3>${t('extractor')}${off(S.site.link_extractor_enabled)}</h3><p>${t('extractorD')}</p><a class="btn" href="#/extractor">${t('extractor')}</a></div>
+      <div class="card"><h3>${t('converter')}${off(S.site.video_converter_enabled)}</h3><p>${t('converterD')}</p>
+        <p><small>${t('max')}: ${esc(S.site.max_upload_mb)} MB · ${t('fmts')}: ${(S.site.output_formats || []).map(f => esc(f.toUpperCase())).join(', ')}</small></p><a class="btn" href="#/converter">${t('converter')}</a></div></div>`,
+  '/about': () => page(t('about'), paras('aboutT')),
+  '/privacy': () => page(t('privacy'), paras('privT')),
+  '/terms': () => page(t('terms'), paras('termsT')),
+  '/contact': () => page(t('contact'), `<p>${t('contactT')}</p><div class="social"><a class="btn" target="_blank" rel="noopener" href="https://whatsapp.com/channel/0029VbEPv2q59PwbQFNJ4h2p">${t('wa')}</a><a class="btn" target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61594747541201">${t('fb')}</a></div>`),
+  '/settings': () => page(t('settings'), `<div class="grid"><label>${t('lang')}<select id="s_lang" style="width:100%">${[['ar', 'العربية'], ['en', 'English'], ['fr', 'Français']].map(([c, n]) => `<option value="${c}" ${c === S.lang ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
+    <label>${t('theme')}<select id="s_theme" style="width:100%">${['light', 'dark', 'blue'].map(m => `<option value="${m}" ${document.documentElement.dataset.theme === m ? 'selected' : ''}>${t(m)}</option>`).join('')}</select></label></div>`),
+  '/login': () => authForm('login'),
+  '/register': () => authForm('register'),
+  '/dashboard': () => '<div class="spin"></div>',
+  '/history': () => '<div class="spin"></div>',
+  '/admin': () => '<div class="spin"></div>',
+  '/extractor': () => '<div class="spin"></div>',
+  '/converter': () => '<div class="spin"></div>',
+};
+function authForm(kind) {
+  const reg = kind === 'register';
+  return `<form class="card form" id="authForm"><h2>${t(kind)}</h2>
+    <label>${t('username')}<input name="username" autocomplete="username" required minlength="3" maxlength="32" pattern="[A-Za-z0-9_.\\-]+"></label>
+    <label>${t('password')}<input name="password" type="password" autocomplete="${reg ? 'new-password' : 'current-password'}" required minlength="${reg ? 8 : 1}" maxlength="128"></label>
+    ${reg ? `<label>${t('confirm')}<input name="confirmPassword" type="password" autocomplete="new-password" required></label>` : ''}
+    <div class="err-msg" id="err"></div><button class="btn" type="submit">${t(kind)}</button>
+    <small>${reg ? t('haveAcc') + ` <a href="#/login"><u>${t('login')}</u></a>` : t('noAcc') + ` <a href="#/register"><u>${t('register')}</u></a>`}</small></form>`;
+}
+function bindAuth(kind) {
+  $('#authForm').onsubmit = async e => {
+    e.preventDefault(); const b = e.target.querySelector('button'); b.disabled = true; $('#err').textContent = '';
+    try {
+      const d = Object.fromEntries(new FormData(e.target));
+      const r = await api('/api/auth/' + kind, { method: 'POST', body: d });
+      S.user = r.user; S.mode = 'admin'; sessionStorage.mode = 'admin';
+      location.hash = r.user.role === 'ADMIN' ? '#/admin' : '#/dashboard'; render();
+    } catch (er) { $('#err').textContent = er.message; b.disabled = false; }
+  };
+}
+function histTable(items, admin) {
+  if (!items.length) return `<p>${t('noOps')}</p>`;
+  return `<div class="tbl"><table><tr>${admin ? `<th>${t('user')}</th>` : ''}<th>${t('type')}</th><th>${t('source')}</th><th>${t('format')}</th><th>${t('date')}</th><th>${t('duration')}</th><th>${t('status')}</th><th>${t('reason')}</th></tr>
+  ${items.map(o => `<tr>${admin ? `<td>${esc(o.username)}</td>` : ''}<td>${t(o.type)}</td><td>${esc(srcLabel(o.source))}</td><td>${esc(o.output_format?.toUpperCase())}</td><td>${fmtDate(o.created_at)}</td><td>${fmtDur(o.duration_ms)}</td>
+  <td><span class="badge ${o.status === 'success' ? 'ok' : 'bad'}">${t(o.status)}</span></td><td>${esc(reasonText(o.error))}</td></tr>`).join('')}</table></div>`;
+}
+async function loadDashboard(tok = S.tok) {
+  const { items } = await api('/api/history?limit=200');
+  if (tok !== S.tok) return; // ignore responses that arrive after the user left this page
+  const ok = items.filter(i => i.status === 'success').length;
+  $('#main').innerHTML = `<div class="card"><h2>${t('welcome')}, ${esc(S.user.username)}</h2><div class="grid"><div class="card stat"><b>${items.length}</b><span>${t('myOps')}</span></div><div class="card stat"><b>${ok}</b><span>${t('s_ok')}</span></div><div class="card stat"><b>${items.length - ok}</b><span>${t('s_bad')}</span></div></div></div>
+  <div class="card" style="margin-top:16px"><h3>${t('recent')}</h3>${histTable(items.slice(0, 5))}</div>`;
+}
+async function loadHistory(tok = S.tok) {
+  const { items } = await api('/api/history?limit=200');
+  if (tok !== S.tok) return; // ignore responses that arrive after the user left this page
+  $('#main').innerHTML = page(t('history'), `${histTable(items, isAdmin() && S.mode === 'admin')}${items.length && !(adminView()) ? `<p><button class="btn danger" id="clr">${t('clear')}</button></p>` : ''}`);
+  if ($('#clr')) $('#clr').onclick = async () => { if (!confirm(t('confirmClear'))) return; await api('/api/history', { method: 'DELETE' }); toast(t('saved')); loadHistory(); };
+}
+const bars = (rows, lk, vertical = true) => {
+  if (!rows.length) return `<p>${t('noData')}</p>`;
+  const max = Math.max(...rows.map(r => r.n)) || 1;
+  return vertical ? `<div class="bars">${rows.map(r => `<div style="height:${Math.max(4, r.n / max * 100)}%" title="${esc(r[lk])}: ${r.n}"><small>${r.n}</small></div>`).join('')}</div>`
+    : `<div class="bars h">${rows.map(r => `<div style="width:${Math.max(8, r.n / max * 100)}%">${esc(String(r[lk]).toUpperCase())} · ${r.n}</div>`).join('')}</div>`;
+};
+async function loadAdmin(tok = S.tok) {
+  if (!adminView()) { location.hash = '#/dashboard'; return; }
+  const tab = (location.hash.split('?tab=')[1]) || 'overview';
+  const tabs = [['overview', 'overview'], ['settings', 'siteSettings'], ['users', 'users'], ['hist', 'allHist']];
+  const head = `<h2>${t('admin')}</h2><div class="tabs">${tabs.map(([k, l]) => `<a class="btn ${k === tab ? '' : 'ghost'}" href="#/admin?tab=${k}">${t(l)}</a>`).join('')}</div>`;
+  const M = $('#main');
+  if (tab === 'overview') {
+    const d = await api('/api/admin/stats');
+  if (tok !== S.tok) return; // ignore responses that arrive after the user left this page
+    const v = d.visitors, o = d.operations;
+    const cards = [['s_total', v.total], ['s_today', v.today], ['s_month', v.month], ['s_active', v.active], ['s_users', d.registeredUsers], ['s_conv', o.conversions], ['s_ext', o.extractions], ['s_ok', o.success], ['s_bad', o.failed]];
+    const c = d.charts;
+    M.innerHTML = head + `<div class="grid">${cards.map(([k, n]) => `<div class="card stat"><b>${n}</b><span>${t(k)}</span></div>`).join('')}</div>
+    <div class="grid" style="margin-top:16px">
+    <div class="card chart"><h3>${t('c_daily')}</h3>${bars(c.dailyVisitors, 'day')}</div>
+    <div class="card chart"><h3>${t('c_monthly')}</h3>${bars(c.monthlyVisitors, 'month')}</div>
+    <div class="card chart"><h3>${t('c_users')}</h3>${bars(c.newUsers, 'day')}</div>
+    <div class="card"><h3>${t('c_serv')}</h3>${bars(c.topServices.map(r => ({ ...r, source: srcLabel(r.source) })), 'source', false)}</div>
+    <div class="card"><h3>${t('c_fmt')}</h3>${bars(c.topFormats, 'output_format', false)}</div></div>`;
+  } else if (tab === 'settings') {
+    const s = await api('/api/admin/settings');
+  if (tok !== S.tok) return; // ignore responses that arrive after the user left this page
+    const chk = (id, label, on) => `<label class="row"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}>${label}</label>`;
+    M.innerHTML = head + `<form class="card" id="setForm" style="display:grid;gap:14px">
+      <label>${t('siteName')}<input id="f_name" maxlength="60" value="${esc(s.site_name)}"></label>
+      <label>${t('siteDesc')}<textarea id="f_desc" maxlength="300">${esc(s.site_description)}</textarea></label>
+      <label>${t('defLang')}<select id="f_lang" style="width:100%">${['ar', 'en', 'fr'].map(l => `<option ${l === s.default_language ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      ${chk('f_ext', t('extOn'), s.link_extractor_enabled)}${chk('f_conv', t('convOn'), s.video_converter_enabled)}
+      <label>${t('maxUp')}<input id="f_max" type="number" min="1" max="5000" value="${s.max_upload_mb}"></label>
+      <label>${t('retention')}<input id="f_ret" type="number" min="1" max="10080" value="${s.retention_minutes}"></label>
+      <div><b>${t('fmts')}</b><div style="display:flex;gap:14px">${['mp4', 'm3u8', 'mpd'].map(f => `<label class="row"><input type="checkbox" class="fmt" value="${f}" ${s.output_formats.includes(f) ? 'checked' : ''}>${f.toUpperCase()}</label>`).join('')}</div></div>
+      ${chk('f_maint', t('maintOn'), s.maintenance_mode)}
+      ${['ar', 'en', 'fr'].map(l => `<label>${t('maintMsg')} (${l})<textarea id="m_${l}" maxlength="500">${esc(s.maintenance_message[l])}</textarea></label>`).join('')}
+      <label>${t('primary')}<input id="f_color" type="color" value="${esc(s.theme.primary)}"></label>
+      <label>${t('themeMode')}<select id="f_mode" style="width:100%">${['light', 'dark', 'blue'].map(m => `<option value="${m}" ${m === s.theme.mode ? 'selected' : ''}>${t(m)}</option>`).join('')}</select></label>
+      <button class="btn" type="submit">${t('save')}</button></form>`;
+    $('#setForm').onsubmit = async e => {
+      e.preventDefault();
+      try {
+        await api('/api/admin/settings', { method: 'PUT', body: {
+          site_name: $('#f_name').value, site_description: $('#f_desc').value, default_language: $('#f_lang').value,
+          link_extractor_enabled: $('#f_ext').checked, video_converter_enabled: $('#f_conv').checked,
+          max_upload_mb: parseInt($('#f_max').value), retention_minutes: parseInt($('#f_ret').value),
+          output_formats: [...document.querySelectorAll('.fmt:checked')].map(x => x.value), maintenance_mode: $('#f_maint').checked,
+          maintenance_message: { ar: $('#m_ar').value, en: $('#m_en').value, fr: $('#m_fr').value },
+          theme: { primary: $('#f_color').value, mode: $('#f_mode').value } } });
+        S.site = await api('/api/settings/public'); applyLook(); toast(t('saved')); render();
+      } catch (er) { toast(er.message, true); }
+    };
+  } else if (tab === 'users') {
+    const { items } = await api('/api/admin/users');
+  if (tok !== S.tok) return; // ignore responses that arrive after the user left this page
+    M.innerHTML = head + `<div class="card tbl"><table><tr><th>${t('username')}</th><th>${t('role')}</th><th>${t('created')}</th><th></th></tr>
+    ${items.map(u => `<tr><td>${esc(u.username)}</td><td><span class="badge">${u.role}</span></td><td>${fmtDate(u.created_at)}</td><td>${u.role === 'USER' ? `<button class="btn danger" data-del="${u.id}">${t('del')}</button>` : ''}</td></tr>`).join('')}</table></div>`;
+    M.onclick = async e => { const id = e.target.dataset?.del; if (!id || !confirm(t('confirmDel'))) return; try { await api('/api/admin/users/' + id, { method: 'DELETE' }); loadAdmin(); } catch (er) { toast(er.message, true); } };
+  } else {
+    const { items } = await api('/api/history?limit=200');
+  if (tok !== S.tok) return; // ignore responses that arrive after the user left this page
+    M.innerHTML = head + `<div class="card">${histTable(items, true)}</div>`;
+  }
+}
+
+/* ---------- Link Extractor ---------- */
+const EX = { source: 'other', url: '', fmt: null, busy: false, result: null, error: '' };
+const onPage = p => route() === p && $('#main');
+function loadExtractor() {
+  const m = $('#main');
+  if (S.site.link_extractor_enabled === false && !isAdmin()) { m.innerHTML = page(t('extractor'), `<p>${t('svcOff')}</p>`); return; }
+  const fmts = S.site.output_formats || ['m3u8', 'mpd', 'mp4'];
+  if (!EX.fmt || !fmts.includes(EX.fmt)) EX.fmt = fmts[0];
+  const r = EX.result, safe = r && /^https?:\/\//i.test(r.url);
+  m.innerHTML = `<div class="card"><h2>${t('extractor')}</h2><p class="muted">${t('extNote')}</p>
+    <div class="chips" role="radiogroup">${['facebook', 'google', 'kick', 'other'].map(k => `<button type="button" class="chip ${EX.source === k ? 'on' : ''}" data-src="${k}">${srcLabel(k)}</button>`).join('')}</div>
+    <label>${t('urlL')}<div class="inline"><input id="exUrl" type="url" dir="ltr" placeholder="https://..." value="${esc(EX.url)}" maxlength="2048">
+      <button type="button" class="btn ghost" id="exPaste">${t('paste')}</button><button type="button" class="btn ghost" id="exClear">${t('clr')}</button></div></label>
+    <label>${t('outFmt')}<select id="exFmt" style="width:100%">${fmts.map(f => `<option value="${f}" ${f === EX.fmt ? 'selected' : ''}>${f.toUpperCase()}</option>`).join('')}</select></label>
+    <div class="err-msg" id="exErr">${esc(EX.error)}</div>
+    <button class="btn" id="exGo" ${EX.busy ? 'disabled' : ''}>${EX.busy ? `<span class="dot"></span>${t('analyzing')}` : t('analyze')}</button></div>
+    ${r ? `<div class="card" style="margin-top:16px"><h3>${t('resTitle')} <span class="badge ok">${t('success')}</span></h3>
+      <label>${t('extUrl')}<input id="exOut" dir="ltr" readonly value="${esc(r.url)}"></label>
+      <p>${t('srcName')}: <b>${esc(srcLabel(r.source))}</b> · ${t('format')}: <b>${esc(r.format.toUpperCase())}</b></p>
+      <div class="inline"><button class="btn" id="exCopy">${t('copy')}</button>${r.downloadable && safe ? `<a class="btn ghost" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${t('dl')}</a>` : ''}</div></div>` : ''}`;
+  m.querySelectorAll('[data-src]').forEach(b => b.onclick = () => { EX.source = b.dataset.src; EX.url = $('#exUrl').value; loadExtractor(); });
+  $('#exUrl').oninput = e => { EX.url = e.target.value; };
+  $('#exFmt').onchange = e => { EX.fmt = e.target.value; };
+  $('#exClear').onclick = () => { EX.url = ''; EX.result = null; EX.error = ''; loadExtractor(); };
+  $('#exPaste').onclick = async () => { try { EX.url = (await navigator.clipboard.readText()).trim(); loadExtractor(); } catch { toast(t('net'), true); } };
+  if ($('#exCopy')) $('#exCopy').onclick = async () => { try { await navigator.clipboard.writeText(EX.result.url); } catch { $('#exOut').select(); document.execCommand('copy'); } toast(t('copied')); };
+  $('#exGo').onclick = async () => {
+    EX.url = $('#exUrl').value.trim(); EX.error = ''; EX.result = null;
+    let ok = false; try { const u = new URL(EX.url); ok = /^https?:$/.test(u.protocol); } catch {}
+    if (!ok) { EX.error = t('badUrl'); return loadExtractor(); }
+    EX.busy = true; loadExtractor();
+    try { EX.result = await api('/api/extractor/analyze', { method: 'POST', body: { url: EX.url, source: EX.source, format: EX.fmt } }); }
+    catch (er) { EX.error = er.message; if (er.status === 401) { S.user = null; location.hash = '#/login'; } }
+    EX.busy = false; if (onPage('/extractor')) loadExtractor();
+  };
+}
+
+/* ---------- Video Converter (state-driven so language/theme changes and navigation never lose progress) ---------- */
+const EXTS = ['.mp4', '.mov', '.mkv', '.webm', '.avi', '.m4v', '.ts', '.flv', '.wmv', '.3gp'];
+const CV = { file: null, url: null, dur: null, fmt: null, phase: 'idle', pct: 0, job: null, error: '' };
+const fmtSize = b => b >= 1e9 ? (b / 1e9).toFixed(2) + ' GB' : b >= 1e6 ? (b / 1e6).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1e3)) + ' KB';
+const fmtTime = s => { s = Math.round(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+const cvBusy = () => ['uploading', 'queued', 'running'].includes(CV.phase);
+function cvReset() {
+  if (CV.url) URL.revokeObjectURL(CV.url);
+  Object.assign(CV, { file: null, url: null, dur: null, phase: 'idle', pct: 0, job: null, error: '' }); sessionStorage.removeItem('astronJob');
+}
+function cvPaint() {
+  const m = onPage('/converter'); if (!m) return;
+  if (S.site.video_converter_enabled === false && !isAdmin()) { m.innerHTML = page(t('converter'), `<p>${t('svcOff')}</p>`); return; }
+  const fmts = S.site.output_formats || ['mp4', 'm3u8', 'mpd'];
+  if (!CV.fmt || !fmts.includes(CV.fmt)) CV.fmt = fmts[0];
+  const f = CV.file, name = f ? f.name : CV.job?.original_name || '', ph = CV.phase;
+  let body;
+  if (ph === 'idle' && !f) body = `<div class="drop" id="drop" tabindex="0"><div class="big">⬆</div><p>${t('drop')}</p><small>${EXTS.join(' ')} · ${t('max')}: ${esc(S.site.max_upload_mb)} MB</small>
+      <input type="file" id="pick" accept="video/*,${EXTS.join(',')}" hidden></div>`;
+  else if (ph === 'idle') body = `<video class="prev" src="${CV.url}" controls preload="metadata" playsinline></video>
+      <p><b>${t('fName')}:</b> <span dir="ltr">${esc(f.name)}</span><br><b>${t('fSize')}:</b> ${fmtSize(f.size)}<br><b>${t('fDur')}:</b> <span id="cvDur">${CV.dur ? fmtTime(CV.dur) : '…'}</span></p>
+      <label>${t('outFmt')}<select id="cvFmt" style="width:100%">${fmts.map(x => `<option value="${x}" ${x === CV.fmt ? 'selected' : ''}>${x.toUpperCase()}</option>`).join('')}</select></label>
+      <div class="inline"><button class="btn" id="cvGo">${t('startConv')}</button><button class="btn ghost" id="cvRm">${t('rmFile')}</button></div>`;
+  else if (cvBusy()) body = `<p><span dir="ltr">${esc(name)}</span></p><div class="progress"><div id="bar" style="width:${CV.pct}%"></div></div>
+      <p><span id="cvSt"></span> <b id="pct">${CV.pct}%</b></p><button class="btn danger" id="cvCancel">${t('cancel')}</button>`;
+  else if (ph === 'done') body = `<p><span class="badge ok">${t('st_done')}</span> <span dir="ltr">${esc(name)}</span></p>
+      ${CV.job?.size_out ? `<p>${t('fSize')}: ${fmtSize(Number(CV.job.size_out))}</p>` : ''}${CV.job?.output_format !== 'mp4' ? `<p class="muted">${t('pkgNote')}</p>` : ''}<p class="muted">${t('keepNote')}</p>
+      <div class="inline"><a class="btn" href="${API}/api/converter/jobs/${CV.job.id}/download">${t('dl')}</a><button class="btn ghost" id="cvAnother">${t('another')}</button></div>`;
+  else body = `<p><span class="badge bad">${t('st_' + ph) || t('st_failed')}</span> ${esc(CV.error)}</p><button class="btn" id="cvAnother">${t('another')}</button>`;
+  m.innerHTML = page(t('converter'), body);
+  cvTick();
+  const $$ = id => document.getElementById(id);
+  if ($$('drop')) { const d = $$('drop'), pick = $$('pick');
+    d.onclick = () => pick.click(); d.onkeydown = e => { if (e.key === 'Enter') pick.click(); };
+    pick.onchange = () => pick.files[0] && cvChoose(pick.files[0]);
+    d.ondragover = e => { e.preventDefault(); d.classList.add('over'); }; d.ondragleave = () => d.classList.remove('over');
+    d.ondrop = e => { e.preventDefault(); d.classList.remove('over'); e.dataTransfer.files[0] && cvChoose(e.dataTransfer.files[0]); }; }
+  if ($$('cvFmt')) $$('cvFmt').onchange = e => { CV.fmt = e.target.value; };
+  if ($$('cvRm')) $$('cvRm').onclick = () => { cvReset(); cvPaint(); };
+  if ($$('cvGo')) $$('cvGo').onclick = cvUpload;
+  if ($$('cvCancel')) $$('cvCancel').onclick = cvCancel;
+  if ($$('cvAnother')) $$('cvAnother').onclick = async () => { const id = CV.job?.id; cvReset(); cvPaint(); if (id) api('/api/converter/jobs/' + id, { method: 'DELETE' }).catch(() => {}); };
+  const v = m.querySelector('video'); if (v) v.onloadedmetadata = () => { CV.dur = v.duration; if ($$('cvDur')) $$('cvDur').textContent = fmtTime(v.duration); };
+}
+function cvTick() { // light update: progress bar + status text only (keeps the preview playing)
+  const bar = document.getElementById('bar'); if (!bar) return;
+  bar.style.width = CV.pct + '%'; document.getElementById('pct').textContent = CV.pct + '%';
+  document.getElementById('cvSt').textContent = t(CV.phase === 'uploading' ? 'uploading' : 'st_' + CV.phase);
+}
+function cvChoose(file) {
+  const ext = '.' + file.name.split('.').pop().toLowerCase();
+  if (!EXTS.includes(ext)) return toast(t('badFile'), true);
+  if (file.size > S.site.max_upload_mb * 1048576) return toast(`${t('tooBig')} (${S.site.max_upload_mb} MB)`, true);
+  cvReset(); CV.file = file; CV.url = URL.createObjectURL(file); cvPaint();
+}
+function cvUpload() {
+  const f = CV.file, x = new XMLHttpRequest(); S.xhr = x;
+  x.open('POST', API + '/api/converter/jobs?' + new URLSearchParams({ format: CV.fmt, name: f.name }));
+  x.withCredentials = true; x.setRequestHeader('Content-Type', 'application/octet-stream'); x.setRequestHeader('X-Lang', S.lang);
+  x.upload.onprogress = e => { if (e.lengthComputable) { CV.pct = Math.round(e.loaded / e.total * 100); cvTick(); } };
+  const bail = msg => { S.xhr = null; CV.phase = 'idle'; CV.pct = 0; toast(msg, true); cvPaint(); };
+  x.onerror = () => bail(t('net')); x.onabort = () => { S.xhr = null; };
+  x.onload = () => {
+    S.xhr = null; let d = {}; try { d = JSON.parse(x.responseText); } catch {}
+    if (x.status !== 202) return bail(d.message?.[S.lang] || d.message || t('net'));
+    CV.job = d.job; sessionStorage.astronJob = d.job.id; CV.phase = d.job.status; CV.pct = 0; cvPaint(); cvPoll();
+  };
+  CV.phase = 'uploading'; CV.pct = 0; cvPaint(); x.send(f);
+}
+function cvPoll() {
+  clearInterval(S.poll);
+  S.poll = setInterval(async () => {
+    try {
+      const { job } = await api('/api/converter/jobs/' + CV.job.id); CV.job = job;
+      if (['queued', 'running'].includes(job.status)) { CV.pct = job.progress; if (CV.phase !== job.status) { CV.phase = job.status; cvPaint(); } else cvTick(); return; }
+      clearInterval(S.poll); CV.pct = 100; CV.phase = job.status === 'done' ? 'done' : job.status === 'cancelled' ? 'cancelled' : 'failed';
+      CV.error = job.status === 'done' ? '' : reasonText(job.status === 'expired' ? 'EXPIRED' : job.error); cvPaint();
+    } catch (er) { if (er.status === 404 || er.status === 401) { clearInterval(S.poll); cvReset(); cvPaint(); } }
+  }, 1000);
+}
+async function cvCancel() {
+  if (CV.phase === 'uploading' && S.xhr) { S.xhr.abort(); S.xhr = null; CV.phase = 'idle'; CV.pct = 0; return cvPaint(); }
+  try { await api(`/api/converter/jobs/${CV.job.id}/cancel`, { method: 'POST' }); } catch (er) { toast(er.message, true); }
+}
+async function loadConverter() {
+  if (!CV.job && !CV.file && sessionStorage.astronJob) { // resume a job that was running when the page was left/refreshed
+    try { const { job } = await api('/api/converter/jobs/' + sessionStorage.astronJob);
+      if (['queued', 'running', 'done'].includes(job.status)) { CV.job = job; CV.phase = job.status; CV.pct = job.progress; if (job.status !== 'done') cvPoll(); } else sessionStorage.removeItem('astronJob');
+    } catch { sessionStorage.removeItem('astronJob'); }
+  }
+  cvPaint();
+}
+const loaders = { '/dashboard': loadDashboard, '/history': loadHistory, '/admin': loadAdmin, '/extractor': loadExtractor, '/converter': loadConverter };
+
+async function render() {
+  const r = route(), tok = S.tok = (S.tok || 0) + 1;
+  let p = pages[r];
+  if (['/dashboard', '/history', '/admin', '/extractor', '/converter'].includes(r) && !S.user) { location.hash = '#/login'; return; }
+  if (['/login', '/register'].includes(r) && S.user) { location.hash = '#/dashboard'; return; }
+  if (r === '/admin' && !adminView()) { location.hash = '#/dashboard'; return; }
+  layout(p ? p() : `<div class="card">${t('nf')}</div>`);
+  if (r === '/login' || r === '/register') bindAuth(r.slice(1));
+  if (r === '/settings') {
+    $('#s_lang').onchange = e => { S.lang = localStorage.lang = e.target.value; applyLook(); render(); };
+    $('#s_theme').onchange = e => { S.theme = localStorage.theme = e.target.value; applyLook(); };
+  }
+  if (loaders[r]) try { await loaders[r](tok); } catch (er) {
+    if (er.status === 401) { S.user = null; location.hash = '#/login'; render(); } else $('#main').innerHTML = `<div class="card err-msg">${esc(er.message)}</div>`;
+  }
+}
+
+async function track() {
+  let id = localStorage.visitorId;
+  if (!id) id = localStorage.visitorId = crypto.randomUUID();
+  api('/api/track', { method: 'POST', body: { visitorId: id } }).catch(() => {});
+}
+async function init() {
+  // Arabic is the default for new visitors; the saved choice is used afterwards.
+  if (!localStorage.lang) S.lang = 'ar';
+  applyLook();
+  $('#app').innerHTML = `<div class="spin"></div>`;
+  await detectApi();
+  try { S.site = await api('/api/settings/public'); } catch (e) { toast(e.message, true); }
+  try { S.user = (await api('/api/auth/me')).user; } catch {}
+  applyLook(); track(); render();
+  window.addEventListener('hashchange', render);
+}
+init();
+})();
+
+</script>
+</body>
+</html>
